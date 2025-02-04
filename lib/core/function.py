@@ -7,9 +7,11 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from sklearn.metrics import precision_recall_fscore_support
 
 import time
 import logging
+import numpy as np
 
 import torch
 
@@ -93,6 +95,9 @@ def validate(config, val_loader, model, criterion, output_dir, tb_log_dir,
     # switch to evaluate mode
     model.eval()
 
+    all_targets = []
+    all_preds = []
+
     with torch.no_grad():
         end = time.time()
         for i, (input, target) in enumerate(val_loader):
@@ -105,6 +110,15 @@ def validate(config, val_loader, model, criterion, output_dir, tb_log_dir,
 
             # measure accuracy and record loss
             losses.update(loss.item(), input.size(0))
+
+
+            #Get predictions
+            _, preds = torch.max(output, 1)
+
+            # Store targets and predictions
+            all_targets.extend(target.cpu().numpy())
+            all_preds.extend(preds.cpu().numpy())
+
             prec1, prec5 = accuracy(output, target, (1, 5))
             top1.update(prec1[0], input.size(0))
             top5.update(prec5[0], input.size(0))
@@ -112,6 +126,13 @@ def validate(config, val_loader, model, criterion, output_dir, tb_log_dir,
             # measure elapsed time
             batch_time.update(time.time() - end)
             end = time.time()
+
+        all_targets = np.array(all_targets)
+        all_preds = np.array(all_preds)
+        precision, recall, f1, _ = precision_recall_fscore_support(all_targets, all_preds, average=None)
+        for i, (p, r, f) in enumerate(zip(precision, recall, f1)):
+            logger.info(f'Class {i}: Precision {p:.3f}, Recall {r:.3f}, F1-score {f:.3f}')
+
 
         msg = 'Test: Time {batch_time.avg:.3f}\t' \
               'Loss {loss.avg:.4f}\t' \
