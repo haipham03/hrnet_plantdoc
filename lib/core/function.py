@@ -55,7 +55,7 @@ def train(config, train_loader, model, criterion, optimizer, epoch,
 
         top1.update(prec1[0], input.size(0))
         top5.update(prec5[0], input.size(0))
-
+    
         # measure elapsed time
         batch_time.update(time.time() - end)
         end = time.time()
@@ -63,12 +63,14 @@ def train(config, train_loader, model, criterion, optimizer, epoch,
         if i % config.PRINT_FREQ == 0:
             msg = 'Epoch: [{0}][{1}/{2}]\t' \
                   'Time {batch_time.val:.3f}s ({batch_time.avg:.3f}s)\t' \
+                  'Learning rate {learning_rate:.5f}\t' \
                   'Speed {speed:.1f} samples/s\t' \
                   'Data {data_time.val:.3f}s ({data_time.avg:.3f}s)\t' \
                   'Loss {loss.val:.5f} ({loss.avg:.5f})\t' \
                   'Accuracy@1 {top1.val:.3f} ({top1.avg:.3f})\t' \
                   'Accuracy@5 {top5.val:.3f} ({top5.avg:.3f})\t'.format(
                       epoch, i, len(train_loader), batch_time=batch_time,
+                      learning_rate=optimizer.param_groups[0]['lr'],
                       speed=input.size(0)/batch_time.val,
                       data_time=data_time, loss=losses, top1=top1, top5=top5)
             logger.info(msg)

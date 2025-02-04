@@ -62,6 +62,11 @@ def parse_args():
                         type=str,
                         default='')
 
+    parser.add_argument('--pretrain',
+                        help='pretrained model',
+                        default=None,
+                        type=str)
+
     args = parser.parse_args()
     update_config(config, args)
 
@@ -87,7 +92,7 @@ def main():
     dump_input = torch.rand(
         (1, 3, config.MODEL.IMAGE_SIZE[1], config.MODEL.IMAGE_SIZE[0])
     )
-    logger.info(get_model_summary(model, dump_input))
+    # logger.info(get_model_summary(model, dump_input))
 
     # copy model file
     this_dir = os.path.dirname(__file__)
@@ -113,6 +118,10 @@ def main():
     best_perf = 0.0
     best_model = False
     last_epoch = config.TRAIN.BEGIN_EPOCH
+    if args.pretrain:
+        checkpoint = torch.load(args.pretrain)
+        model.module.load_state_dict(checkpoint)
+        logger.info("=> loaded pretrained model")
     if config.TRAIN.RESUME:
         model_state_file = os.path.join(final_output_dir,
                                         'checkpoint.pth.tar')
@@ -125,6 +134,7 @@ def main():
             logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
             best_model = True
+    
             
     if isinstance(config.TRAIN.LR_STEP, list):
         lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
@@ -140,6 +150,8 @@ def main():
     # Data loading code
     traindir = os.path.join(config.DATASET.ROOT, config.DATASET.TRAIN_SET)
     valdir = os.path.join(config.DATASET.ROOT, config.DATASET.TEST_SET)
+    traindir = "PlantDoc-Dataset/train"
+    valdir = "PlantDoc-Dataset/val"
 
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])

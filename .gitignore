@@ -1,0 +1,7 @@
+*.pth
+PlantDoc-Dataset
+*.jpg
+*.png
+output
+log
+healthy

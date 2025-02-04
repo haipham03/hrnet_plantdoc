@@ -103,6 +103,7 @@ def main():
     # Data loading code
     valdir = os.path.join(config.DATASET.ROOT,
                           config.DATASET.TEST_SET)
+    valdir = "PlantDoc-Dataset/val"
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
 

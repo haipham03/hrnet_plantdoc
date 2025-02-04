@@ -67,8 +67,8 @@ DATASET:
   DATASET: 'imagenet'
   DATA_FORMAT: 'jpg'
   ROOT: '/data/hpc/phh/HRNet-Image-Classification/PlantDoc-Dataset'
-  TEST_SET: 'test'
-  TRAIN_SET: 'train'
+  TEST_SET: 'binary_val'
+  TRAIN_SET: 'binary_train'
 TEST:
   BATCH_SIZE_PER_GPU: 32
   MODEL_FILE: ''
