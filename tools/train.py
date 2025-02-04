@@ -151,7 +151,7 @@ def main():
     traindir = os.path.join(config.DATASET.ROOT, config.DATASET.TRAIN_SET)
     valdir = os.path.join(config.DATASET.ROOT, config.DATASET.TEST_SET)
     traindir = "PlantDoc-Dataset/train"
-    valdir = "PlantDoc-Dataset/val"
+    valdir = "PlantDoc-Dataset/test"
 
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
